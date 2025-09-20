@@ -106,16 +106,20 @@
         .drag-over {
             @apply border-2 border-dashed border-blue-500;
         }
+
+        /* Marquee specific styles */
         .marquee-container {
             width: 100%;
             overflow: hidden;
-            white-space: nowrap;
         }
         .marquee-text {
             display: inline-block;
-            animation-name: scrollText;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
+            white-space: nowrap;
+            animation: marquee linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
         }
     </style>
 </head>
@@ -422,14 +426,13 @@
             albumArt.src = song.imageSrc || 'https://placehold.co/500x500/000000/FFFFFF?text=Album+Art';
             audio.src = song.audioSrc;
             
-            // Bug Fix: Reset the playback speed to 1x and update the UI
-            audio.playbackRate = 1;
-            speedSelect.value = 1;
+            // Fix: Explicitly set the playback speed to the currently selected value
+            audio.playbackRate = parseFloat(speedSelect.value);
 
             playSong();
             // Call the marquee function after updating the text
-            applyMarquee(songTitle, 'song-title-style');
-            applyMarquee(songArtist, 'song-artist-style');
+            applyMarquee(songTitle);
+            applyMarquee(songArtist);
 
             // Set the active song in the playlist
             const playlistItems = playlistEl.querySelectorAll('li');
@@ -459,37 +462,30 @@
         };
 
         // Function to apply marquee effect if text overflows
-        const applyMarquee = (element, styleId) => {
+        const applyMarquee = (element) => {
             const container = element.parentElement;
-            const styleEl = document.getElementById(styleId);
-
-            // Remove previous style element if it exists
-            if (styleEl) {
-                styleEl.remove();
-            }
+            const originalText = element.dataset.originalText || element.textContent;
             
+            // Reset to original content and remove animation class
+            element.dataset.originalText = originalText;
+            element.textContent = originalText; 
+            element.classList.remove('marquee-text');
+            element.style.animationDuration = '';
+
             // Wait for the next frame to get accurate dimensions
             requestAnimationFrame(() => {
-                const overflowWidth = element.scrollWidth - container.clientWidth;
-                if (overflowWidth > 0) {
-                    const duration = Math.max(10, overflowWidth / 20); // Dynamic duration
-                    const keyframes = `
-                        @keyframes scrollText-${styleId} {
-                            0% { transform: translateX(0); }
-                            100% { transform: translateX(-${overflowWidth + 10}px); }
-                        }
-                    `;
-                    const style = document.createElement('style');
-                    style.id = styleId;
-                    style.innerHTML = keyframes;
-                    document.head.appendChild(style);
+                const textWidth = element.scrollWidth;
+                const containerWidth = container.clientWidth;
 
+                if (textWidth > containerWidth) {
+                    const space = '\u00A0\u00A0\u00A0\u00A0\u00A0';
+                    element.textContent = `${originalText}${space}${originalText}`;
+                    
                     element.classList.add('marquee-text');
-                    element.style.animationName = `scrollText-${styleId}`;
+
+                    // Set the duration based on text length to keep speed consistent
+                    const duration = textWidth / 40; 
                     element.style.animationDuration = `${duration}s`;
-                } else {
-                    element.classList.remove('marquee-text');
-                    element.style.animationName = '';
                 }
             });
         };
