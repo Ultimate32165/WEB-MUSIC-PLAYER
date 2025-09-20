@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Music Player</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex items-center justify-center min-h-screen text-white p-4">
+    <div class="flex flex-col items-center w-full max-w-sm space-y-4">
+        <!-- File Input -->
+        <input type="file" id="fileInput" accept="audio/*" multiple class="p-2 rounded text-black w-full">
+
+        <!-- Player Container -->
+        <div id="player-container" class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full flex flex-col items-center space-y-6 transform transition-transform duration-300 hover:scale-105">
+            <!-- Album Art -->
+            <div class="relative w-48 h-48 rounded-xl overflow-hidden shadow-lg">
+                <img id="album-art" src="https://placehold.co/500x500/000000/FFFFFF?text=Album+Art" alt="Album Art" class="object-cover w-full h-full transform transition-transform duration-500 ease-in-out hover:scale-110">
+            </div>
+
+            <!-- Song Details -->
+            <div class="text-center">
+                <h2 id="song-title" class="text-xl font-bold truncate max-w-[200px]"></h2>
+                <p id="song-artist" class="text-gray-400 text-sm truncate max-w-[200px]"></p>
+            </div>
+
+            <!-- Progress Bar & Time -->
+            <div class="w-full">
+                <div id="progress-container" class="w-full h-2 bg-gray-700 rounded-full cursor-pointer relative overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-blue-500 rounded-full w-0 transition-width duration-200 ease-linear"></div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-400 mt-2">
+                    <span id="current-time">0:00</span>
+                    <span id="total-time">0:00</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center space-x-6">
+                <button id="prev" class="p-3 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors duration-200">⏮️</button>
+                <button id="play" class="p-4 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors duration-200 shadow-lg">
+                    <span id="play-icon">▶️</span>
+                    <span id="pause-icon" class="hidden">⏸️</span>
+                </button>
+                <button id="next" class="p-3 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors duration-200">⏭️</button>
+            </div>
+
+            <audio id="audio"></audio>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
